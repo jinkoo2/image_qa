@@ -9,12 +9,8 @@ on:
       - main
 
 jobs:
-  build:
+  build-linux:
     runs-on: ubuntu-latest
-
-    strategy:
-      matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
 
     steps:
       - uses: actions/checkout@v2
@@ -27,33 +23,63 @@ jobs:
           python -m pip install --upgrade pip
           pip install poetry
           poetry install
-      - name: Run tests
+      - name: Build for Linux
         run: |
-          poetry run pytest
-      
-  build-release:
-    needs: build
-    runs-on: ubuntu-latest
+          poetry run pyinstaller --onefile run.py --distpath dist/linux
+          ls -al dist/linux
+
+      - name: Upload Linux artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: hello-world-linux
+          path: dist/linux/
+
+  build-windows:
+    runs-on: windows-latest
 
     steps:
       - uses: actions/checkout@v2
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.10'
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install poetry
           poetry install
       - name: Build for Windows
-        if: matrix.os == 'windows-latest'
         run: |
-          poetry run pyinstaller --onefile run.py
-          ls -al dist/
-      - name: Build for MacOS
-        if: matrix.os == 'macos-latest'
-        run: |
-          poetry run pyinstaller --onefile run.py
-          ls -al dist/
-      - name: Upload release assets
+          poetry run pyinstaller --onefile run.py --distpath dist/win
+          ls -al dist/win
+
+      - name: Upload Windows artifacts
         uses: actions/upload-artifact@v3
         with:
-          name: helloworld
-          path: dist/
+          name: hello-world-windows
+          path: dist/win/
+
+  build-macos:
+    runs-on: macos-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.10'
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install poetry
+          poetry install
+      - name: Build for MacOS
+        run: |
+          poetry run pyinstaller --onefile run.py --distpath dist/mac
+          ls -al dist/mac
+
+      - name: Upload MacOS artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: hello-world-macos
+          path: dist/mac/
