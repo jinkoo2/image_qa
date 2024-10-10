@@ -51,7 +51,7 @@ jobs:
       - name: Build for Windows
         run: |
           poetry run pyinstaller --onefile run.py --distpath dist/win
-          ls -al dist/win
+          Get-ChildItem dist/win
 
       - name: Upload Windows artifacts
         uses: actions/upload-artifact@v3
