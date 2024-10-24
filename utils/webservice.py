@@ -3,25 +3,9 @@ import re
 import requests
 from datetime import datetime
 import os
-import utils.helper as helper
-import utils.model as model
-import utils.object as object
-'''
-# Post the Measurement1D array to the API
-def post_measurements(measurements, url):
-    headers = {'Content-Type': 'application/json'}
+from utils import helper, model, object
 
-    # Send a POST request
-    response = requests.post(url, json=measurements, headers=headers)
-    
-    # Check if the request was successful
-    if response.status_code == 200 or response.status_code == 201:
-        print("Measurements successfully posted.")
-        return response.json()
-    else:
-        print(f"Failed to post measurements: {response.status_code} - {response.text}")
-        return None
-''' 
+
 def post(obj, url):
     # POST the result.json to the API
     headers = {'Content-Type': 'application/json'}

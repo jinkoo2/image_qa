@@ -6,10 +6,9 @@ from tkcalendar import DateEntry  # Date picker widget
 from tkinter import ttk  # For progress bar
 import threading
 import time
-from utils.helper import read_json_file
 
-import utils.helper as helper
-import utils.webservice as webservice
+from utils import helper, webservice
+
 import importlib
 
 import sys
@@ -26,7 +25,7 @@ from dicom_chooser import DicomChooser, SelectionMode
 import dicom_helper
 
 SETTINGS_FILE = '_settings.json'
-APP_VERSION = '1.0.0'
+APP_VERSION = '0.1.1'
 
 # Initialize the logger
 from app_logger import logger
@@ -247,7 +246,7 @@ class PyLinacGuiApp:
         if not os.path.exists(config_file):
             raise Exception(f"Config file ({config_file}) not found. It should be in the same folder of this executablel file")
 
-        return read_json_file(config_file)
+        return helper.read_json_file(config_file)
 
     def site(self):
         if self.site_combobox.get() == "":
@@ -285,7 +284,7 @@ class PyLinacGuiApp:
             raise Exception(f"Error:Phantom config file not found. {config_file}")
             return
 
-        return read_json_file(config_file)
+        return helper.read_json_file(config_file)
     
     def populate_performed_by(self):
         users = self.config.get('users', [])
