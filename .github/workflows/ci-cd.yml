@@ -25,13 +25,13 @@ jobs:
           poetry install
       - name: Build for Linux
         run: |
-          poetry run pyinstaller --onefile app.py --distpath dist/linux
+          poetry run pyinstaller --onefile --windowed app.py --name image_qa --distpath dist/linux
           ls -al dist/linux
 
       - name: Upload Linux artifacts
         uses: actions/upload-artifact@v3
         with:
-          name: hello-world-linux
+          name: image_qa-linux
           path: dist/linux/
 
   build-windows:
@@ -50,13 +50,13 @@ jobs:
           poetry install
       - name: Build for Windows
         run: |
-          poetry run pyinstaller --onefile app.py --distpath dist/win
+          poetry run pyinstaller --onefile --windowed app.py --name image_qa --distpath dist/win
           Get-ChildItem dist/win
 
       - name: Upload Windows artifacts
         uses: actions/upload-artifact@v3
         with:
-          name: hello-world-windows
+          name: image_qa-windows
           path: dist/win/
 
   build-macos:
@@ -75,11 +75,11 @@ jobs:
           poetry install
       - name: Build for MacOS
         run: |
-          poetry run pyinstaller --onefile app.py --distpath dist/mac
+          poetry run pyinstaller --onefile --windowed app.py --name image_qa --distpath dist/mac
           ls -al dist/mac
 
       - name: Upload MacOS artifacts
         uses: actions/upload-artifact@v3
         with:
-          name: hello-world-macos
+          name: image_qa-macos
           path: dist/mac/
