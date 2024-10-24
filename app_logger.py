@@ -3,8 +3,6 @@ import os
 import logging
 from logging.handlers import TimedRotatingFileHandler
 from datetime import datetime
-import utils
-import utils.helper
 
 # Ensure the _logs directory exists
 logs_dir = os.path.abspath('_logs')

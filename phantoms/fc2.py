@@ -1,6 +1,5 @@
 import os
 from pylinac import StandardImagingFC2
-from utils.helper import obj_serializer
 import phantoms.helper
 
 def run_analysis(device_id, input_file, output_dir, config, notes, metadata, log_message):

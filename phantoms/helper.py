@@ -1,9 +1,7 @@
 import os
 import shutil
-import utils.helper as helper 
 import json
-from utils.helper import obj_serializer
-import utils.object as object
+import utils 
 
 def copy_logo(config, output_dir, log_message):
     # copy logo file
@@ -43,7 +41,7 @@ def save_result_as_json(phantom, output_dir, device_id, notes, config, metadata,
     result = phantom.results_data()
     result_json = os.path.join(output_dir, 'result.json')
 
-    result_dict = json.loads(json.dumps(vars(result), default=obj_serializer))
+    result_dict = json.loads(json.dumps(vars(result), default=utils.helper.obj_serializer))
     result_dict['device_id'] = device_id
     result_dict['performed_by'] = metadata['Performed By']
     result_dict['performed_on'] = metadata['Performed Date']
@@ -76,7 +74,7 @@ def append_result_to_phantom_csv(phantom, output_dir, device_id, notes, metadata
         result_data = json.load(json_file)
 
     log_message('collecting perperties from the result file...')
-    kvps = object.traverse_and_collect_numbers_strings(result_data)
+    kvps = utils.object.traverse_and_collect_numbers_strings(result_data)
     
     # header
     keys = [item['key'] for item in kvps]
