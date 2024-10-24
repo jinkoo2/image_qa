@@ -23,6 +23,7 @@ import phantoms.helper
 import phantoms.leedstor
 
 from dicom_chooser import DicomChooser, SelectionMode
+import dicom_helper
 
 SETTINGS_FILE = '_settings.json'
 APP_VERSION = '1.0.0'
@@ -326,17 +327,7 @@ class PyLinacGuiApp:
         self.log(f'selected_file={selected_file}')
 
         if selected_file:
-            # case output folder
-            case_outdir = self.get_case_output_folder(selected_file)
-
-            import shutil
-            src_file = selected_file
-            dst_file = os.path.join(case_outdir, 'input.dcm')
-            shutil.copy(src_file, dst_file)
-            
-            self.analysis_input_file = dst_file
-            self.analysis_result_folder = case_outdir
-
+            self.selected_file = selected_file
             self.select_image_label.config(text= os.path.basename(src_file))
         else:
             self.log("No files selected for analysis.")
@@ -360,22 +351,10 @@ class PyLinacGuiApp:
         self.log(f"Selected image: {selected_series_name}")
 
         if selected_files and len(selected_files)>1:
+            self.selected_files = selected_files
+            self.selected_series_name = selected_series_name
             
-            # case output folder
-            case_outdir = self.get_case_output_folder(selected_files[0])
-            self.log(f'case output folder={case_outdir}')
-
-            import shutil
-            for i, src_file in enumerate(selected_files):
-                dst_file = os.path.join(case_outdir, f'input_{str(i).zfill(3)}.dcm' )
-                self.log(f'copying file...{src_file}-->{dst_file}')
-                shutil.copy(src_file, dst_file)
-            
-            self.analysis_input_folder = case_outdir
-            self.analysis_result_folder = case_outdir
-
             self.select_image_label.config(text= selected_series_name)
-
         else:
             self.log("No image selected.")
             return
@@ -414,6 +393,23 @@ class PyLinacGuiApp:
             notes = f'{user_notes}\n{config_notes}'                
 
             if self.get_phantom_dim() == 2:
+
+                if self.selected_file == None or self.selected_file == "":
+                    self.log('Please select an image first.')                 
+                    return 
+                
+                # case output folder
+                case_outdir = self.get_case_output_folder(self.selected_file)
+
+                import shutil
+                src_file = self.selected_file
+                dst_file = os.path.join(case_outdir, 'input.dcm')
+                shutil.copy(src_file, dst_file)
+                
+                self.analysis_input_file = dst_file
+                self.analysis_result_folder = case_outdir
+
+                
                 module.run_analysis(device_id=self.device_id(),
                     input_file=self.analysis_input_file, 
                     output_dir=self.analysis_result_folder, 
@@ -423,6 +419,26 @@ class PyLinacGuiApp:
                     log_message=self.log
                     )
             else: # 3d phantom
+                
+                if self.selected_series_name == None or self.selected_series_name == "":
+                    self.log("Please select the phantom images first.")
+                    return
+                
+                # copy files to the output folder
+                # case output folder
+                case_outdir = self.get_case_output_folder(self.selected_files[0])
+                self.log(f'case output folder={case_outdir}')
+
+                import shutil
+                for i, src_file in enumerate(self.selected_files):
+                    dst_file = os.path.join(case_outdir, f'input_{str(i).zfill(3)}.dcm' )
+                    self.log(f'copying file...{src_file}-->{dst_file}')
+                    shutil.copy(src_file, dst_file)
+                
+                self.analysis_input_folder = case_outdir
+                self.analysis_result_folder = case_outdir
+                
+                
                 module.run_analysis(device_id=self.device_id(),
                     input_dir = self.analysis_input_folder,
                     output_dir=self.analysis_result_folder, 
